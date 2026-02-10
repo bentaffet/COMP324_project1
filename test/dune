@@ -1,0 +1,13 @@
+; To run these tests individually:
+;   $ dune build @runtest-test_core
+; or
+;   $ dune build @runtest-test_challenge
+;
+; Note that 
+;   $ dune test
+; is equivalent to executing both command lines.
+
+(tests
+ (names test_core test_challenge)
+ (libraries str alcotest yojson ocminus)
+ (deps (source_tree suites)))

@@ -1,0 +1,12 @@
+(library
+ (name ocminus)
+ (public_name ocminus)
+ (modules :standard)
+ (preprocess (pps ppx_deriving.show)))
+
+(ocamllex core_lexer challenge_lexer)
+
+(menhir (modules core_parser challenge_parser))
+
+; (include_subdirs qualified)
+
