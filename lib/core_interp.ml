@@ -90,7 +90,7 @@ let binop (op : E.binop) (v : Value.t) (v' : Value.t) : Value.t =
   | (E.Or, Value.V.Bool b, Value.V.Bool b') -> Value.V.Bool(b or b')
   | (E.Eq, Value.V.Bool b, Value.V.Bool b') -> Value.V.Bool(b = b)
   | (E.Ne, Value.V.Bool b, Value.V.Bool b') -> Value.V.Bool(b not = b')
-  | _ -> failwith "Unimplemented"
+  | _ -> failwith "typeerror"
 
   (*
   | (E.Lt, Value.V.Bool b, Value.V.Bool b') -> Value.V.Bool(b < b')
@@ -116,17 +116,17 @@ let binop (op : E.binop) (v : Value.t) (v' : Value.t) : Value.t =
 let unop(sign: E.unop) (v: Value.t): Value.t =
   match (sign, v) with
   | (E.Neg, Value.V_Int n) -> Value.V_Int(-n)
-  | (E.Neg, Value.V_Bool b) -> failwith "typeerror"
   | (E.Not, Value.V_Bool b) -> Value.V_Bool(not b)
-  | (E.Not, Value.V_Int n) -> failwith "typeerror"
-  
+  | _ -> failwith "typeerror"
+ 
+  (*
 let if(v:Value.t) (v0:Value.t) (v1:Value.t): Value.t =
   match (v,v0,v1) with
   | (Value.V_Bool b = true, , ) ->
   | (Value.V_Bool) b = false, , ) ->
 
   (*NEED TO FINISH IMPLEMEENTING*)
-
+*)
 
 
 
@@ -147,19 +147,22 @@ let rec exec(rho:Env.t) (e: E.t) : Value.t =
     let v = exec rho e in
     let v' = exec rho e' in
     binop op v v'
-
+(*
   | E.If(e,e0,e1) -> 
     let v=exec rho e in
     let v0=exec rho e0 in
     let v1=exec rho e1 in
-    if v v0 v1
+    if v v0 v1 *)
 
   | E.Let (x, e', e) ->
     let v' = exec rho e' in
     exec (Env.update rho x v') e
 
-  | E.Call (x, e) -> 
+ (* | E.Call (x, e) -> *)
     (*NEED TO IMPLEMEENT*)
+
+  | _ -> failwith "Unimplemented"
+
   
 
 
