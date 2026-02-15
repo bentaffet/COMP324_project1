@@ -5,6 +5,8 @@
 
 module Ast = Core_ast
 
+module E=Ast.Expr
+
 (* UndefinedFunction f is raised when f is called but not defined.
  *)
 exception UndefinedFunction of Ast.Id.t
@@ -49,7 +51,53 @@ module Env = struct
    *)
   let empty : t = []
 
+  let lookup (rho : t) (x : Ast.Id.t) : Value.t = 
+    List.assoc x rho
+(*! end !*)
+
+  (*  update ρ x v = ρ{x → v}.
+   *)
+  let update (rho : t) (x : Ast.Id.t) (v : Value.t) : t =
+    (x, v) :: List.remove_assoc x rho
 end
+
+(*  binop op v v' = v'', where v'' is the result of applying the semantic
+ *  denotation of `op` to `v` and `v''`.
+ *)
+(*! binop header !*)
+let binop (op : E.binop) (v : Value.t) (v' : Value.t) : Value.t =
+
+  match (op, v, v') with
+(*! end !*)
+(*! binop plus !*)
+  | (E.Plus, Value.V_Int n, Value.V_Int n') -> Value.V_Int (n + n')
+(*! end !*)
+  | (E.Minus, Value.V_Int n, Value.V_Int n') -> Value.V_Int (n - n')
+  | (E.Times, Value.V_Int n, Value.V_Int n') -> Value.V_Int (n * n')
+  | (E.Div, Value.V_Int n, Value.V_Int n') -> Value.V_Int (n / n')
+  | _ -> failwith "Unimplemented"
+
+
+let rec exec(rho:Env.t) (e: E.t) : Value.t =
+  match e with
+(*! end !*)
+  | E.Var x -> Env.lookup rho x
+  | E.Num n -> Value.V_Int n
+  (*| E.Neg  ->
+    let V_Int n = exec rho e in
+    V_Int (-n)*)
+(*! eval binop !*)
+  | E.Binop (op, e, e') ->
+    let v = exec rho e in
+    let v' = exec rho e' in
+    binop op v v'
+(*! end !*)
+(*! eval let !*)
+  | E.Let (x, e', e) ->
+    let v' = exec rho e' in
+    exec (Env.update rho x v') e
+  | E.Call (x, e) -> e
+    
 
 
 (* exec p = v, where `v` is the result of executing `p`.

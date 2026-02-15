@@ -1,0 +1,39 @@
+# dune build @runtest-test_core
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /Users/kenjikono/.cache/dune/db
+# Workspace root: /Users/kenjikono/comp324/projects/COMP324_project1
+# Auto-detected concurrency: 8
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /Users/kenjikono/.opam/comp324/bin/ocamlc.opt -config > /var/folders/fw/6q_csqnj4979y2v5d3nfpcth0000gn/T/dune_cf7ce6_output
+$ (cd _build/.sandbox/4de5fe2a737ad127be930f9945c22c49/default && .ppx/9701bfed56997d69630e6dafe6acceed/ppx.exe --cookie 'library-name="ocminus"' -o lib/core_interp.pp.ml --impl lib/core_interp.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /Users/kenjikono/.opam/comp324/bin/ocamldep.opt -modules -impl lib/core_interp.pp.ml) > _build/default/lib/.ocminus.objs/ocminus__Core_interp.impl.d
+$ (cd _build/default && /Users/kenjikono/.opam/comp324/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.ocminus.objs/byte -I /Users/kenjikono/.opam/comp324/lib/ppx_deriving/runtime -no-alias-deps -opaque -open Ocminus__ -o lib/.ocminus.objs/byte/ocminus__Core_interp.cmo -c -impl lib/core_interp.pp.ml)
+> File "lib/core_interp.ml", lines 82-98, characters 2-32:
+> 82 | ..match e with
+> 83 | (*! end !*)
+> 84 |   | E.Var x -> Env.lookup rho x
+> 85 |   | E.Num n -> Value.V_Int n
+> 86 |   (*| E.Neg  ->
+> ...
+> 95 | (*! eval let !*)
+> 96 |   | E.Let (x, e', e) ->
+> 97 |     let v' = exec rho e' in
+> 98 |     exec (Env.update rho x v') e
+> Error (warning 8 [partial-match]): this pattern-matching is not exhaustive.
+>   Here is an example of a case that is not matched:
+>     (Bool _|Unop (_, _)|If (_, _, _)|Call (_, _))
+>
+> File "lib/core_interp.ml", line 81, characters 8-12:
+> 81 | let rec exec(rho:Env.t) (e: E.t) : Value.t =
+>              ^^^^
+> Error (warning 32 [unused-value-declaration]): unused value exec.
+[2]

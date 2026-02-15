@@ -1,0 +1,9 @@
+(*!tests!
+ *
+ * {
+ *    "exception":  "UnboundVariable"
+ * }
+ *
+ *)
+
+x ;;
