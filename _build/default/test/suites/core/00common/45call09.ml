@@ -1,0 +1,12 @@
+(*!tests!
+ *
+ * { "output": ["true"] }
+ *
+ *)
+
+let check_bounds x =
+  let min_val = 0 in
+  let max_val = 10 in
+  x >= min_val && x <= max_val
+;;
+check_bounds 7 ;;

@@ -1,0 +1,16 @@
+# dune build @runtest-test_core
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /Users/kenjikono/.cache/dune/db
+# Workspace root: /Users/kenjikono/comp324/projects/COMP324_project1
+# Auto-detected concurrency: 8
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /Users/kenjikono/.opam/comp324/bin/ocamlc.opt -config > /var/folders/fw/6q_csqnj4979y2v5d3nfpcth0000gn/T/dune_eebb6a_output
