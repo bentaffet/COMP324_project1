@@ -1,0 +1,5 @@
+[33mASSERT[0m suites/core/00common/10sub04.ml
+[31mFAIL[0m suites/core/00common/10sub04.ml
+
+   Expected: `[32m"-1"[0m'
+   Received: `[31m"2"[0m'
