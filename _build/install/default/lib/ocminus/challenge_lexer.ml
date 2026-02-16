@@ -1,1 +1,0 @@
-../../../../default/lib/challenge_lexer.ml

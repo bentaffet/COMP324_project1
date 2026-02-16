@@ -1,5 +1,0 @@
-[33mASSERT[0m suites/core/00common/35let08.ml
-[31mFAIL[0m suites/core/00common/35let08.ml
-
-   Expected: `[32m"20"[0m'
-   Received: `[31m"15"[0m'

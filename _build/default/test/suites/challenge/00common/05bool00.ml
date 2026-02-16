@@ -1,7 +1,0 @@
-(*!tests!
- *
- * { "output": ["true"] }
- *
- *)
-
-true ;;
