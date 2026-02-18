@@ -94,15 +94,15 @@ let unop(sign: E.unop) (v: Value.t): Value.t =
   | (E.Not, Value.V_Bool b) -> Value.V_Bool(not b)
   | _ -> raise (TypeError "invalid operands for unary operator")
 
- 
+let rec lookup_fundef (funs :Ast.Script.fundef list) (f : Ast.Id.t) : (Ast.Id.t list * E.t) =
+  match funs with
+  | [] -> raise (UndefinedFunction f)
+  | (name, params, body) :: rest ->
+      if name = f then (params, body)
+      else lookup_fundef rest f
 
-let conditional(v:Value.t) (v0:Value.t) (v1:Value.t): Value.t =
-  match v with
-  | Value.V_Bool true  -> v0
-  | Value.V_Bool false -> v1
-  | _ -> raise (TypeError "if condition must be boolean")
 
-let rec eval (rho:Env.t) (e: E.t) : Value.t =
+let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
   match e with
 (*! end !*)
   | E.Var x -> Env.lookup rho x
@@ -112,37 +112,41 @@ let rec eval (rho:Env.t) (e: E.t) : Value.t =
   | E.Bool (b) -> Value.V_Bool b
 
   | E.Unop (sign,e) -> 
-    let v=eval rho e in
+    let v=eval funs rho e in
     unop sign v
 
   | E.Binop (op, e, e') ->
-    let v = eval rho e in
-    let v' = eval rho e' in
+    let v = eval funs rho e in
+    let v' = eval funs rho e' in
     binop op v v'
 
   | E.If(e,e0,e1) -> 
-    let v = eval rho e in
-    let v0 = eval rho e0 in
-    let v1 = eval rho e1 in 
-    conditional v v0 v1
+    let v = eval funs rho e in
+    (match v with
+  | Value.V_Bool true  -> eval funs rho e0 
+  | Value.V_Bool false -> eval funs rho e1
+  | _ -> raise (TypeError "if condition must be boolean"))
       
 
   | E.Let (x, e', e) ->
-    let v' = eval rho e' in
-    eval (Env.update rho x v') e
+    let v' = eval funs rho e' in
+    eval funs (Env.update rho x v') e
 
- (* | E.Call (x, e) -> *)
-    (*NEED TO IMPLEMEENT*)
 
-  | _ -> failwith "Unimplemented"
-
-  
+ | E.Call (f, arg_expressions) ->
+    let (params, body) = lookup_fundef funs f in
+    if List.length params <> List.length arg_expressions then
+      raise (TypeError "Wrong number of arguments")
+    else
+      let arg_values = List.map (fun arg_e -> eval funs rho arg_e) arg_expressions in
+      let new_rho = List.combine params arg_values in    
+      eval funs new_rho body
 
 
 (* exec p = v, where `v` is the result of executing `p`.
  *)
 let exec (p : Ast.Script.t) : Value.t =
   match p with
-  | Ast.Script.Pgm (_funs, e) ->
-      eval Env.empty e
+  | Ast.Script.Pgm (funs, e) ->
+      eval funs Env.empty e
 

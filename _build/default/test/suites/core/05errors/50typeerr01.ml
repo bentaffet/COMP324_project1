@@ -3,5 +3,5 @@
  *
  *)
 
-false / let x = 3 in x ;;
+false / (let x = 3 in x) ;;
 
