@@ -1,11 +1,10 @@
 (*!tests!
  *
- * { "output": ["25"] }
+ * { "output": ["5"] }
  *
  *)
 
-let square_sum x y =
-  let square z = z * z in
-  square x + square y
-in
-square_sum 3 4 ;;
+let rec countdown n =
+  if n <= 0 then 0
+  else countdown (n - 1) + 1;;
+countdown 5;;
