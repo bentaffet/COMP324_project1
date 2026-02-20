@@ -1,0 +1,5 @@
+[33mASSERT[0m suites/challenge/05errors/60undec00.ml
+[31mFAIL[0m suites/challenge/05errors/60undec00.ml
+
+   Expected: `[32mSome "UnboundVariable"[0m'
+   Received: `[31mSome "Not_found"[0m'

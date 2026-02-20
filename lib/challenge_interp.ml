@@ -3,65 +3,44 @@
  * N. Danner
  *)
 
-module Ast = Core_ast
+module Ast = Challenge_ast
+module E = Ast.Expr
 
-module E=Ast.Expr
-
-(* UndefinedFunction f is raised when f is called but not defined.
- *)
 exception UndefinedFunction of Ast.Id.t
-
-(* UnboundVariable x is raised when x is used but not declared.
- *)
 exception UnboundVariable of Ast.Id.t
-
-(* TypeError s is raised when an operator or function is applied to operands
- * of the incorrect type.  s is any (hopefuly useful) message.
- *)
 exception TypeError of string
 
-(* Values.
- *)
+type value_t = 
+  | V_Int of int
+  | V_Bool of bool
+  | V_Fun of env_t * Ast.Id.t list * Ast.Expr.t
+and env_t = (Ast.Id.t * value_t) list
+[@@deriving show]
+
 module Value = struct
-  type t = 
+  type t = value_t = 
     | V_Int of int
     | V_Bool of bool
-    | V_Fun of Env.t * Ast.Id.t list * Ast.Expr.t
-    [@@deriving show]
+    | V_Fun of env_t * Ast.Id.t list * Ast.Expr.t
 
-  (* to_string v = a string representation of v (more human-readable than
-   * `show`.
-   *)
   let to_string (v : t) : string =
     match v with
     | V_Int n -> Int.to_string n
     | V_Bool b -> Bool.to_string b
+    | V_Fun _ -> "<fun>" 
 end
 
-(* Environments.  An environment is a finite map from identifiers to values.
- * We will interchangeably treat environments as functions or sets or lists
- * of pairs in documentation.  We will use ρ as a metavariable over
- * environments.
- *)
 module Env = struct
+  type t = env_t
 
-  type t = (Ast.Id.t * Value.t) list
-  [@@deriving show]
-
-  (*  empty = ρ, where dom ρ = ∅.
-   *)
   let empty : t = [] 
 
   let lookup (rho : t) (x : Ast.Id.t) : Value.t = 
     List.assoc x rho
 
-
-  (*  update ρ x v = ρ{x → v}.
-   *)
   let update (rho : t) (x : Ast.Id.t) (v : Value.t) : t =
     (x, v) :: List.remove_assoc x rho
-
-    end
+end
 
 (*  binop op v v' = v'', where v'' is the result of applying the semantic
  *  denotation of `op` to `v` and `v''`.
@@ -105,7 +84,6 @@ let rec lookup_fundef (funs :Ast.Script.fundef list) (f : Ast.Id.t) : (Ast.Id.t 
 
 let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
   match e with
-(*! end !*)
   | E.Var x -> Env.lookup rho x
 
   | E.Num n -> Value.V_Int n
@@ -134,38 +112,51 @@ let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
     eval funs (Env.update rho x v') e
 
 
- | E.Call (f, arg_expressions) ->
-    let (params, body) = lookup_fundef funs f in
-    let n = List.length arg_expressions in
-    let m = List.length params in
-    if n > m then
-      raise (TypeError "Too many arguments for function") (* error here bc n > m *)
 
+ | E.Call (e_fn, arg_expressions) ->
+    let v_fn = eval funs rho e_fn in
+
+    (match v_fn with
+    | Value.V_Fun (closure_rho, params, body) ->   
+      let n = List.length arg_expressions in
+      let m = List.length params in
+
+      let arg_values = List.map (eval funs rho) arg_expressions in
+
+    if n > m then
+      raise (TypeError "Too many arguments for function") 
 
     (* Use previous logic from core interpreter *)
     else if n = m then 
-      let arg_values = List.map (fun arg_e -> eval funs rho arg_e) arg_expressions in
-      let new_rho = List.combine params arg_values in
+      let paired_args = List.combine params arg_values in
+      let new_rho = List.fold_left (fun env (p, v) -> Env.update env p v) closure_rho paired_args in
       eval funs new_rho body
 
     (* Case when n < m 
     Split the params into the ones we bind now and the leftovers
     *)
     else 
-      let arg_values = List.map (fun arg_e -> eval funs rho arg_e) arg_expressions in
-      let rec split_params n params_acc remaining_params = 
+      let rec split_params k params_acc remaining_params = 
         (* Where n is num of args we have, params_acc is accumilator for first n params we bind now, remaining params is rest of param list we go through*)
         (* Base case is n = 0 or no params left, recursive step i'm not sure *)
-          match n, remaining_params with
+          match k, remaining_params with
             | 0, _ -> (List.rev params_acc, remaining_params)   
             | _, [] -> (List.rev params_acc, remaining_params)  
-            | n, p::ps -> 
-     
-  
+            | k, p::ps -> split_params (k - 1) (p :: params_acc) ps
 
+          in
+
+          let (bound_params, leftover_params) = split_params n [] params in
+
+          let paired_args = List.combine bound_params arg_values in
+          let new_rho = List.fold_left (fun env (p, v) -> Env.update env p v) closure_rho paired_args in
+
+          Value.V_Fun (new_rho, leftover_params, body)
             
-      | _ -> raise(UnboundVariable "Error")
+      | _ -> raise(UnboundVariable "Error") )
 
+| E.Fun (params, body) ->
+  Value.V_Fun (rho, params, body)
 
 
 (* exec p = v, where `v` is the result of executing `p`.
