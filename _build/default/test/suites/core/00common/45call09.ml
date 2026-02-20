@@ -4,9 +4,8 @@
  *
  *)
 
-let check_bounds x =
-  let min_val = 0 in
-  let max_val = 10 in
-  x >= min_val && x <= max_val
-;;
+let rec check_bounds x =
+  if x >= 0 && x <= 10 then true
+  else false ;;
+
 check_bounds 7 ;;

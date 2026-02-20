@@ -1,12 +1,15 @@
 (*!tests!
  *
- * { "output": ["true"] }
+ * { "output": ["12"] }
  *
  *)
 
-let f x y = if x = y then true else false ;;
+let rec f n =
+  if n <= 0 then 0
+  else n + f (n - 1) ;;
 
-let rec fact n = if n <= 1 then 1 else n * fact (n - 1) ;;
-
-
-f (fact 5) (fact 5) ;;
+let x = 4 in
+let y = 7 in
+let total = f x in
+let combined = total + y in
+if combined >= 15 then combined - 5 else combined + 5 ;;
