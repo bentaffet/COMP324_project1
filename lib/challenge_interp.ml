@@ -17,6 +17,8 @@ type value_t =
 and env_t = (Ast.Id.t * value_t) list
 [@@deriving show]
 
+(* Module Value: Defines the runtime values evaluated by the interpreter.
+ *)
 module Value = struct
   type t = value_t = 
     | V_Int of int
@@ -30,13 +32,17 @@ module Value = struct
     | V_Fun _ -> "<fun>" 
 end
 
+
+(* Module Env: Manages the execution environment and maps identifiers to their bound values.
+ *)
 module Env = struct
   type t = env_t
 
   let empty : t = [] 
 
   let lookup (rho : t) (x : Ast.Id.t) : Value.t = 
-    List.assoc x rho
+    try List.assoc x rho
+    with Not_found -> raise (UnboundVariable x)
 
   let update (rho : t) (x : Ast.Id.t) (v : Value.t) : t =
     (x, v) :: List.remove_assoc x rho
@@ -85,7 +91,13 @@ let rec lookup_fundef (funs :Ast.Script.fundef list) (f : Ast.Id.t) : (Ast.Id.t 
 let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
   match e with
   | E.Var x ->
-    (try Env.lookup rho x with Not_found -> let (params, body) = lookup_fundef funs x in Value.V_Fun (Env.empty, params, body))
+      (try Env.lookup rho x
+       with UnboundVariable _ ->
+         (try
+            let (params, body) = lookup_fundef funs x in
+            Value.V_Fun (Env.empty, params, body)
+          with UndefinedFunction _ ->
+            raise (UnboundVariable x)))
 
   | E.Num n -> Value.V_Int n
 

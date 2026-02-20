@@ -1,0 +1,119 @@
+(lang dune 3.21)
+(name ocminus)
+(sections (lib .) (libexec .) (bin ../../bin))
+(files
+ (lib
+  (META
+   challenge_ast.ml
+   challenge_interp.ml
+   challenge_lexer.ml
+   challenge_parser.ml
+   challenge_parser.mli
+   core_ast.ml
+   core_interp.ml
+   core_lexer.ml
+   core_parser.ml
+   core_parser.mli
+   dune-package
+   ocminus.a
+   ocminus.cma
+   ocminus.cmi
+   ocminus.cmt
+   ocminus.cmx
+   ocminus.cmxa
+   ocminus.ml
+   ocminus__.cmi
+   ocminus__.cmt
+   ocminus__.cmx
+   ocminus__.ml
+   ocminus__Challenge_ast.cmi
+   ocminus__Challenge_ast.cmt
+   ocminus__Challenge_ast.cmx
+   ocminus__Challenge_interp.cmi
+   ocminus__Challenge_interp.cmt
+   ocminus__Challenge_interp.cmx
+   ocminus__Challenge_lexer.cmi
+   ocminus__Challenge_lexer.cmt
+   ocminus__Challenge_lexer.cmx
+   ocminus__Challenge_parser.cmi
+   ocminus__Challenge_parser.cmt
+   ocminus__Challenge_parser.cmti
+   ocminus__Challenge_parser.cmx
+   ocminus__Core_ast.cmi
+   ocminus__Core_ast.cmt
+   ocminus__Core_ast.cmx
+   ocminus__Core_interp.cmi
+   ocminus__Core_interp.cmt
+   ocminus__Core_interp.cmx
+   ocminus__Core_lexer.cmi
+   ocminus__Core_lexer.cmt
+   ocminus__Core_lexer.cmx
+   ocminus__Core_parser.cmi
+   ocminus__Core_parser.cmt
+   ocminus__Core_parser.cmti
+   ocminus__Core_parser.cmx
+   opam))
+ (libexec (ocminus.cmxs))
+ (bin (ocminus)))
+(library
+ (name ocminus)
+ (kind normal)
+ (archives (byte ocminus.cma) (native ocminus.cmxa))
+ (plugins (byte ocminus.cma) (native ocminus.cmxs))
+ (native_archives ocminus.a)
+ (requires ppx_deriving.runtime)
+ (main_module_name Ocminus)
+ (modes byte native)
+ (modules
+  (wrapped
+   (group
+    (alias
+     (obj_name ocminus__)
+     (visibility public)
+     (kind alias)
+     (source (path Ocminus__) (impl (path ocminus__.ml-gen))))
+    (name Ocminus)
+    (modules
+     (module
+      (obj_name ocminus__Challenge_ast)
+      (visibility public)
+      (source (path Challenge_ast) (impl (path challenge_ast.ml))))
+     (module
+      (obj_name ocminus__Challenge_interp)
+      (visibility public)
+      (source (path Challenge_interp) (impl (path challenge_interp.ml))))
+     (module
+      (obj_name ocminus__Challenge_lexer)
+      (visibility public)
+      (source (path Challenge_lexer) (impl (path challenge_lexer.ml))))
+     (module
+      (obj_name ocminus__Challenge_parser)
+      (visibility public)
+      (source
+       (path Challenge_parser)
+       (intf (path challenge_parser.mli))
+       (impl (path challenge_parser.ml))))
+     (module
+      (obj_name ocminus__Core_ast)
+      (visibility public)
+      (source (path Core_ast) (impl (path core_ast.ml))))
+     (module
+      (obj_name ocminus__Core_interp)
+      (visibility public)
+      (source (path Core_interp) (impl (path core_interp.ml))))
+     (module
+      (obj_name ocminus__Core_lexer)
+      (visibility public)
+      (source (path Core_lexer) (impl (path core_lexer.ml))))
+     (module
+      (obj_name ocminus__Core_parser)
+      (visibility public)
+      (source
+       (path Core_parser)
+       (intf (path core_parser.mli))
+       (impl (path core_parser.ml))))
+     (module
+      (obj_name ocminus)
+      (visibility public)
+      (source (path Ocminus) (impl (path ocminus.ml))))))
+   (wrapped true))))

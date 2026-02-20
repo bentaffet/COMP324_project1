@@ -1,0 +1,81 @@
+type token =
+    TIMES
+  | THEN
+  | SEMI
+  | RPAREN
+  | PLUS
+  | OR
+  | NUM of int
+  | NOT
+  | NE
+  | MOD
+  | MINUS
+  | LT
+  | LPAREN
+  | LETREC
+  | LET
+  | LE
+  | KWAND
+  | IN
+  | IF
+  | ID of string
+  | GT
+  | GE
+  | EQ
+  | EOF
+  | ELSE
+  | DIV
+  | BOOL of bool
+  | AND
+val left_assoc :
+  Core_ast.Expr.t ->
+  (Core_ast.Expr.binop * Core_ast.Expr.t) list -> Core_ast.Expr.t
+val menhir_begin_marker : int
+val xv_unop : Core_ast.Expr.t
+val xv_terminated_pgm : Core_ast.Script.t
+val xv_terminated_exp : Core_ast.Expr.t
+val xv_pmops : Core_ast.Expr.binop
+val xv_pmexp : Core_ast.Expr.t
+val xv_pgm : Core_ast.Script.t
+val xv_orexp : Core_ast.Expr.t
+val xv_option_mainfundef_ : Core_ast.Script.fundef list option
+val xv_operator_separated_list_pmops_mdexp_ :
+  Core_ast.Expr.t * (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_operator_separated_list_mdops_unop_ :
+  Core_ast.Expr.t * (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_operator_separated_list___anonymous_1_compexp_ :
+  Core_ast.Expr.t * (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_operator_separated_list___anonymous_0_andexp_ :
+  Core_ast.Expr.t * (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_op_sep_list_rest_pmops_mdexp_ : Core_ast.Expr.binop * Core_ast.Expr.t
+val xv_op_sep_list_rest_mdops_unop_ : Core_ast.Expr.binop * Core_ast.Expr.t
+val xv_op_sep_list_rest___anonymous_1_compexp_ :
+  Core_ast.Expr.binop * Core_ast.Expr.t
+val xv_op_sep_list_rest___anonymous_0_andexp_ :
+  Core_ast.Expr.binop * Core_ast.Expr.t
+val xv_nonempty_list_aexp_ : Core_ast.Expr.t list
+val xv_morefundefs : Core_ast.Script.fundef
+val xv_mdops : Core_ast.Expr.binop
+val xv_mdexp : Core_ast.Expr.t
+val xv_mainfundef : Core_ast.Script.fundef list
+val xv_list_op_sep_list_rest_pmops_mdexp__ :
+  (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_list_op_sep_list_rest_mdops_unop__ :
+  (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_list_op_sep_list_rest___anonymous_1_compexp__ :
+  (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_list_op_sep_list_rest___anonymous_0_andexp__ :
+  (Core_ast.Expr.binop * Core_ast.Expr.t) list
+val xv_list_morefundefs_ : Core_ast.Script.fundef list
+val xv_list_ID_ : string list
+val xv_ifletexp : Core_ast.Expr.t
+val xv_fundef : Core_ast.Script.fundef
+val xv_exp : Core_ast.Expr.t
+val xv_compop : Core_ast.Expr.binop
+val xv_compexp : Core_ast.Expr.t
+val xv_appexp : Core_ast.Expr.t
+val xv_andexp : Core_ast.Expr.t
+val xv_aexp : Core_ast.Expr.t
+val xv___anonymous_1 : Core_ast.Expr.binop
+val xv___anonymous_0 : Core_ast.Expr.binop
+val menhir_end_marker : int
