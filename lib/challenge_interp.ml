@@ -84,7 +84,8 @@ let rec lookup_fundef (funs :Ast.Script.fundef list) (f : Ast.Id.t) : (Ast.Id.t 
 
 let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
   match e with
-  | E.Var x -> Env.lookup rho x
+  | E.Var x ->
+    (try Env.lookup rho x with Not_found -> let (params, body) = lookup_fundef funs x in Value.V_Fun (Env.empty, params, body))
 
   | E.Num n -> Value.V_Int n
 
@@ -121,7 +122,8 @@ let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
       let n = List.length arg_expressions in
       let m = List.length params in
 
-      let arg_values = List.map (eval funs rho) arg_expressions in
+      let arg_values = List.map (fun arg_e -> eval funs rho arg_e) arg_expressions in
+
 
     if n > m then
       raise (TypeError "Too many arguments for function") 
@@ -153,7 +155,7 @@ let rec eval (funs : Ast.Script.fundef list)(rho:Env.t) (e: E.t) : Value.t =
 
           Value.V_Fun (new_rho, leftover_params, body)
             
-      | _ -> raise(UnboundVariable "Error") )
+      | _ -> raise(TypeError "attempted to call a non-function value") )
 
 | E.Fun (params, body) ->
   Value.V_Fun (rho, params, body)

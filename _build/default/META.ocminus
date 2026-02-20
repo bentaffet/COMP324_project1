@@ -1,6 +1,0 @@
-description = ""
-requires = "ppx_deriving.runtime"
-archive(byte) = "ocminus.cma"
-archive(native) = "ocminus.cmxa"
-plugin(byte) = "ocminus.cma"
-plugin(native) = "ocminus.cmxs"
